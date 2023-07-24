@@ -1,0 +1,27 @@
+input {
+    @apply border;
+}
+
+tr {
+    @apply even:bg-gray-100 odd:bg-white;
+}
+
+th {
+    @apply uppercase px-4 py-2 bg-secondary border font-bold;
+}
+
+td {
+    @apply border;
+}
+
+button {
+    @apply px-4 py-2 bg-primary text-white;
+}
+
+section {
+    @apply flex flex-wrap w-full;
+}
+
+.container {
+    @apply max-w-7xl flex flex-col space-y-2 mx-auto w-full;
+}
