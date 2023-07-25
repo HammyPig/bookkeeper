@@ -128,7 +128,6 @@ export default function CreateInvoicePage() {
             .then(item => {
                 handleEditItem(itemIndex, "description", item.description);
                 handleEditItem(itemIndex, "price", item.price);
-                handleEditItem(itemIndex, "quantity", item.quantity);
             });
     }
 
