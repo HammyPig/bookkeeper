@@ -152,17 +152,26 @@ export default function CreateInvoicePage() {
     }
 
     function isValidInvoice(invoice) {
+        const errors = [];
+
+        if (invoice.items.length === 0) { errors.items = "Invoice has no items" }
+
         for (const item of invoice.items) {
-            if (isNaN(parseFloat(item.quantity))) { return false; }
-            if (isNaN(parseFloat(item.price))) { return false; }
+            if (item.code === "") { errors.items = "Item code missing"; }
+            if (isNaN(parseFloat(item.quantity))) { errors.items = "Item quantity is not a number"; }
+            if (isNaN(parseFloat(item.price))) { errors.items = "Item price is not a number"; }
         }
 
-        return true;
+        const isValid = Object.keys(errors).length === 0;
+        return { isValid, errors };
     }
 
     function handlePreviewInvoice() {
-        if (!isValidInvoice(invoice)) {
-            window.alert("Quantity or Price is not a number.");
+        const { isValid, errors } = isValidInvoice(invoice);
+
+        if (!isValid) {
+            const errorMessages = Object.values(errors).join("\n");
+            window.alert(`ERROR: Invoice is not valid.\n${errorMessages}`);
             return;
         }
 
@@ -200,7 +209,7 @@ export default function CreateInvoicePage() {
     return (
         <>
             <section className="pt-16">
-                <div className="container">
+                <div className="container items-end">
                     <div>
                         <label className="mr-2">Search: <input value={searchValue} onChange={(e) => setSearchValue(e.target.value)} /></label>
                         <button className="py-1" onClick={handleSearch}>Search</button>
@@ -209,7 +218,7 @@ export default function CreateInvoicePage() {
             </section>
             <section className="pt-16">
                 <div className="container">
-                    <form className="w-full" onSubmit={handleSubmit}>
+                    <form className="w-full p-16 bg-white rounded-2xl" onSubmit={handleSubmit}>
                         <section>
                             <div className="container lg:!w-1/2">
                                 <h2>Bill to:</h2>
@@ -229,7 +238,7 @@ export default function CreateInvoicePage() {
                         </section>
                         <section className="pt-16">
                             <div className="container">
-                                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                                     <label>Colour: <input name="itemsOverview.colour" value={invoice.itemsOverview.colour} onChange={(e) => handleEditField(e)} /></label>
                                     <label>Reveal: <input name="itemsOverview.reveal" value={invoice.itemsOverview.reveal} onChange={(e) => handleEditField(e)} /></label>
                                     <label>Screen: <input name="itemsOverview.screen" value={invoice.itemsOverview.screen} onChange={(e) => handleEditField(e)} /></label>
@@ -285,7 +294,11 @@ export default function CreateInvoicePage() {
                         </section>
                         <section className="pt-16">
                             <div className="container items-end">
-                                <label>Subtotal: {getSubtotal()}</label>
+                                <label>Item subtotal: {getSubtotal()}</label>
+                                <label>Delivery price: {invoice.deliveryMethod.price}</label>
+                                <label>Discount: <input name="discount" value={invoice.discount} onChange={(e) => handleEditField(e)} /></label>
+                                <label>Total: {getTotal()}</label>
+                                <label>Amount Paid: <input name="amountPaid" value={invoice.amountPaid} onChange={(e) => handleEditField(e)}/></label>
                                 <label>Payment Method: 
                                     <select className="ml-2" name="paymentMethod" value={invoice.paymentMethod} onChange={(e) => handleEditField(e)} >
                                         <option value="Card">Card</option>
@@ -293,10 +306,6 @@ export default function CreateInvoicePage() {
                                         <option value="Bank Transfer">Bank Transfer</option>
                                     </select>
                                 </label>
-                                <label>Discount: <input name="discount" value={invoice.discount} onChange={(e) => handleEditField(e)} /></label>
-                                <label>Total: {getTotal()}</label>
-                                <label>GST (incl.): {(getTotal() / 11).toFixed(2)}</label>
-                                <label>Amount Paid: <input name="amountPaid" value={invoice.amountPaid} onChange={(e) => handleEditField(e)}/></label>
                                 <label>Balance Due: {getBalance()}</label>
                             </div>
                         </section>

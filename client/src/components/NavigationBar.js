@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function NavigationBar() {
     return (
-        <section>
+        <section className="bg-secondary">
             <div className="container items-center p-8">
                 <nav>
                     <ul className="flex space-x-4">
